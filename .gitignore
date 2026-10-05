@@ -1,0 +1,122 @@
+############################################
+# Secrets and environment variables
+############################################
+.env
+.env.*
+!.env.example
+*.env
+env.properties
+secrets.properties
+application-local.properties
+application-local.yml
+application-local.yaml
+application-secret*.properties
+application-secret*.yml
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.truststore
+credentials.json
+
+############################################
+# Java / Maven / Gradle
+############################################
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+.gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+out/
+bin/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+HELP.md
+
+# Local databases (H2 file mode, SQLite, etc.)
+*.db
+*.mv.db
+*.trace.db
+
+############################################
+# Node / React (frontend)
+############################################
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.vite/
+.cache/
+.eslintcache
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################################
+# IDEs and editors
+############################################
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+.metadata/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code (keep shared settings if added later)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# VS Code Java upgrade / modernize tooling
+.github/modernize/
+**/.github/modernize/
+
+############################################
+# Logs and temp files
+############################################
+logs/
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+############################################
+# OS files
+############################################
+.DS_Store
+Thumbs.db
+desktop.ini
