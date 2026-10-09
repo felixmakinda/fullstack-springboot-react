@@ -8,52 +8,56 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Owner {
-    @Id 
-    @GeneratedValue (strategy=GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long ownerid;
     private String firstname, lastname;
 
-    public Owner(){
+    public Owner() {
 
     }
-    
-    public Owner (String firstname, String lastname){
+
+    public Owner(String firstname, String lastname) {
         super();
         this.firstname = firstname;
         this.lastname = lastname;
     }
 
-    public long getOwnerId(){
+    public long getOwnerId() {
         return ownerid;
     }
 
-    public void setOwnerid(long ownerid){
+    public void setOwnerid(long ownerid) {
         this.ownerid = ownerid;
     }
 
-    public String getFirstname(){
+    public String getFirstname() {
         return firstname;
     }
 
-    public String getLastName(){
+    public String getLastName() {
         return lastname;
     }
 
-    public void setLastname(String lastname){
+    public void setLastname(String lastname) {
         this.lastname = lastname;
     }
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="owner")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<Car> cars;
 
-    public List<Car> getCars(){
+    public List<Car> getCars() {
         return cars;
     }
-    
-    public void setCars (List<Car> cars){
+
+    public void setCars(List<Car> cars) {
         this.cars = cars;
     }
 }
