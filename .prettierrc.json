@@ -1,0 +1,9 @@
+{
+  "plugins": ["prettier-plugin-java"],
+  "overrides": [
+    {
+      "files": "*.java",
+      "options": { "tabWidth": 4, "printWidth": 100 }
+    }
+  ]
+}
