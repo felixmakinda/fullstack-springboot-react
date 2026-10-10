@@ -1,5 +1,7 @@
 package com.packt.cardatabase.service;
 
+import com.packt.cardatabase.domain.User;
+import com.packt.cardatabase.domain.UserRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User.UserBuilder;
@@ -7,12 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.packt.cardatabase.domain.User;
-
-import com.packt.cardatabase.domain.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
     @Autowired
     private UserRepository repository;
 
@@ -30,5 +30,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return builder.build();
     }
-
 }

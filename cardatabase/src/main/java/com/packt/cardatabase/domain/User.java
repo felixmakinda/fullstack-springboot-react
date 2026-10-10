@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
@@ -22,9 +23,7 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(String username, String password, String role) {
         super();
@@ -55,7 +54,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-
     }
 
     public String getRole() {
@@ -65,5 +63,4 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
-
 }
