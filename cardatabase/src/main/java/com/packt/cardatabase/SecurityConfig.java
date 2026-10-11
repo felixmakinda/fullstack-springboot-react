@@ -25,6 +25,9 @@ public class SecurityConfig {
     @Autowired
     private AuthenticationFilter authenticationFilter;
 
+    @Autowired
+    private AuthEntryPoint exceptionHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
@@ -39,6 +42,7 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated()
             )
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(exceptionHandler))
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
