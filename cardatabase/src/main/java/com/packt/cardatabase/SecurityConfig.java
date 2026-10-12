@@ -35,6 +35,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // Chapter 10: temporarily open every endpoint while building the frontend
+        http.csrf(csrf -> csrf.disable())
+            .cors(Customizer.withDefaults())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        /* Secured version: restore when adding authentication to the frontend
         http.csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
             .sessionManagement(session ->
@@ -50,6 +56,7 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex.authenticationEntryPoint(exceptionHandler))
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        */
         return http.build();
     }
 
