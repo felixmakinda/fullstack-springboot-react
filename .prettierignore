@@ -4,3 +4,4 @@ package-lock.json
 mvnw
 mvnw.cmd
 .mvn/
+pnpm-lock.yaml
