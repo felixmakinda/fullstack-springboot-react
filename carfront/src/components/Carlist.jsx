@@ -1,9 +1,31 @@
 import { useEffect, useState } from "react";
 import { SERVER_URL } from "../constants";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, Toolbar, ExportCsv, ExportPrint } from "@mui/x-data-grid";
 import Snackbar from "@mui/material/Snackbar";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import PrintIcon from "@mui/icons-material/Print";
 import AddCar from "./AddCar";
 import EditCar from "./EditCar";
+
+// Grid toolbar with CSV export and print buttons
+function CustomToolbar() {
+  return (
+    <Toolbar>
+      <ExportCsv
+        render={<Button size="small" startIcon={<FileDownloadIcon />} />}
+      >
+        Export CSV
+      </ExportCsv>
+      <ExportPrint render={<Button size="small" startIcon={<PrintIcon />} />}>
+        Print
+      </ExportPrint>
+    </Toolbar>
+  );
+}
 
 function Carlist() {
   const [cars, setCars] = useState([]);
@@ -19,6 +41,7 @@ function Carlist() {
       headerName: "",
       sortable: false,
       filterable: false,
+      disableExport: true,
       renderCell: (row) => <EditCar data={row} updateCar={updateCar} />,
     },
     {
@@ -26,8 +49,11 @@ function Carlist() {
       headerName: "",
       sortable: false,
       filterable: false,
+      disableExport: true,
       renderCell: (row) => (
-        <button onClick={() => onDelClick(row.id)}>Delete</button>
+        <IconButton aria-label="delete" onClick={() => onDelClick(row.id)}>
+          <DeleteIcon color="error" />
+        </IconButton>
       ),
     },
   ];
@@ -94,13 +120,17 @@ function Carlist() {
 
   return (
     <>
-      <AddCar addCar={addCar} />
+      <Stack mt={2} mb={2}>
+        <AddCar addCar={addCar} />
+      </Stack>
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
           rows={cars}
           columns={columns}
           disableRowSelectionOnClick={true}
           getRowId={(row) => row._links.self.href}
+          slots={{ toolbar: CustomToolbar }}
+          showToolbar
         />
         <Snackbar
           open={open}
