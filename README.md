@@ -9,7 +9,7 @@ adds, edits, deletes and exports cars.
 
 > New to full stack development? I wrote a walkthrough of how this app works, following one car
 > from a button click to the database and back:
-> [Anatomy of a Full-Stack Web App](https://felixmakinda.com/blog/anatomy-of-a-full-stack-web-app).
+> [Anatomy of a Full-Stack Web App](https://makinda.vercel.app/blog/anatomy-of-a-full-stack-web-app).
 
 ## Tech Stack
 
@@ -140,7 +140,7 @@ which changed a fair amount of code:
 
 - **Spring Security 7.** `WebSecurityConfigurerAdapter` no longer exists, so security is configured
   with a `SecurityFilterChain` bean and the lambda DSL. I wrote up the changes in
-  [Spring Security Without WebSecurityConfigurerAdapter](https://felixmakinda.com/blog/spring-security-without-websecurityconfigureradapter).
+  [Spring Security Without WebSecurityConfigurerAdapter](https://makinda.vercel.app/blog/spring-security-without-websecurityconfigureradapter).
 - **jjwt 0.13.** New builder and parser methods (`Jwts.parser().verifyWith(...)`,
   `parseSignedClaims(...)`, `Jwts.SIG.HS256.key()`).
 - **`jakarta.*` instead of `javax.*`** for persistence and servlet imports.
