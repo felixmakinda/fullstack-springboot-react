@@ -4,8 +4,8 @@ A full stack car inventory app built while working through
 _Full Stack Development with Spring Boot and React_ (third edition) by Juha Hinkula,
 using current versions of every tool instead of the ones in the book.
 
-The backend is a Spring Boot REST API backed by MariaDB. The frontend is a React app that lists,
-adds, edits, deletes and exports cars.
+The backend is a Spring Boot REST API backed by MariaDB and secured with JWT. The frontend is a
+React app where you log in, then list, add, edit, delete and export cars.
 
 > New to full stack development? I wrote a walkthrough of how this app works, following one car
 > from a button click to the database and back:
@@ -18,7 +18,7 @@ adds, edits, deletes and exports cars.
 | Backend  | Java 27, Spring Boot 4.1, Spring Data JPA + REST, Hibernate, Spring Security 7, jjwt 0.13 |
 | Database | MariaDB (app), H2 in-memory (tests)                                                       |
 | Frontend | React 19, Vite 8, MUI 7, MUI X DataGrid 8, pnpm                                           |
-| Testing  | JUnit 5, MockMvc, `@DataJpaTest`                                                          |
+| Testing  | JUnit 5, MockMvc, `@DataJpaTest` (backend); Vitest, React Testing Library (frontend)      |
 | Tooling  | Maven wrapper, Prettier with the Java plugin                                              |
 
 ## Project Structure
@@ -73,7 +73,21 @@ pnpm install
 pnpm dev
 ```
 
-Then open http://localhost:5173.
+Then open http://localhost:5173 and log in.
+
+### 4. Log in
+
+The sample accounts created on startup have private passwords, so add a demo account to try the
+app. With the backend running, run this in MariaDB (the hash is the BCrypt hash of the password
+`user`, the same one the book uses):
+
+```sql
+INSERT INTO cardb.`user` (username, password, role)
+VALUES ('user', '$2a$10$NVM0n8ElaRgg7zWO1CxUdei7vWoPg91Lz2aYavh9.f9q0e4bRadue', 'USER');
+```
+
+Then log in as `user` / `user`. Because of `create-drop`, the account disappears when the backend
+stops, so add it again after each restart.
 
 ## API
 
@@ -89,21 +103,34 @@ Spring Data REST exposes the repositories under `/api`:
 | Log in       | `POST /login`           |
 
 `POST /login` takes `{"username": "...", "password": "..."}` and returns a JWT in the
-`Authorization` header.
-
-> **Security is temporarily off.** As in the book's Chapter 10, every endpoint is open while the
-> frontend is being built, so you can use the app without logging in. The secured configuration
-> (JWT authentication) is kept in a comment in `SecurityConfig.java` and comes back in Chapter 14.
+`Authorization` header. Every other endpoint needs that header (`Authorization: Bearer <token>`)
+and answers `401 Unauthorized` without a valid one. The frontend keeps the token in
+`sessionStorage`, so it is cleared when the browser tab closes.
 
 ## Running the Tests
+
+**Backend:**
 
 ```bash
 cd cardatabase
 ./mvnw test
 ```
 
-Tests use an in-memory H2 database (`src/test/resources/application.properties`), so they need
-neither MariaDB nor `DB_PASSWORD`, and can run while the app is running.
+Backend tests use an in-memory H2 database (`src/test/resources/application.properties`), so they
+need neither MariaDB nor `DB_PASSWORD`, and can run while the app is running. Besides the
+repository tests, they check the security rules: logging in, rejecting a wrong password, and
+rejecting requests with no token or a forged one.
+
+**Frontend:**
+
+```bash
+cd carfront
+pnpm test        # watch mode, reruns on save
+pnpm test:run    # run once
+```
+
+Frontend tests run in Vitest with React Testing Library. They cover the login form (failed login,
+successful login, log out), the add-car form, and a snapshot of `AddCar`.
 
 ## Formatting
 
@@ -129,9 +156,9 @@ npm run format:check  # report unformatted files
 | 10      | Setting up the frontend                 | ✅ Done                        |
 | 11      | CRUD functionalities                    | ✅ Done                        |
 | 12      | Styling the frontend with MUI           | ✅ Done                        |
-| 13      | Testing the frontend                    | ⏳ Next                        |
-| 14      | Securing the application                | ⬜ Not started                 |
-| 15      | Deploying the application               | ⬜ Not started                 |
+| 13      | Testing the frontend                    | ✅ Done                        |
+| 14      | Securing the application                | ✅ Done                        |
+| 15      | Deploying the application               | ⏭️ Out of scope                |
 
 ## Differences From the Book
 
@@ -154,6 +181,15 @@ which changed a fair amount of code:
   Edit and Delete columns are left out of exports.
 - **Registration numbers in the forms.** The backend's `Car` has a `registerNumber` field, so the
   add and edit forms include it instead of the book's `fuel` field.
+- **Vitest instead of Jest.** create-react-app bundled Jest; Vite projects use Vitest, which has the
+  same `test`/`expect` API. Snapshots use React Testing Library because `react-test-renderer` is
+  deprecated in React 19, and the tests render `AddCar` directly because the app now opens on the
+  login form.
+- **Safer token handling.** An expired, forged or malformed token is treated as "not logged in"
+  (401) instead of crashing the request, and the filter only authenticates requests whose token
+  verified. `/error` is open so real errors such as 404 are not reported as 401.
+- **Log out button.** The book writes a `logout` function but never shows it; here it is a button
+  next to New Car. If the server rejects a saved token, the app returns to the login form.
 - **Sample data** uses Kenyan market cars and local registration plate formats.
 
 ## Workflow
