@@ -30,14 +30,15 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if (jws != null) {
             // Verify token and get user
             String user = jwtService.getAuthUser(request);
-            // Authenticate
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                java.util.Collections.emptyList()
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Authenticate only when the token was valid
+            if (user != null) {
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    java.util.Collections.emptyList()
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         filterChain.doFilter(request, response);
     }

@@ -1,7 +1,9 @@
 package com.packt.cardatabase;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.packt.cardatabase.domain.User;
@@ -46,5 +48,48 @@ public class CarRestTest {
             )
             .andDo(print())
             .andExpect(status().isOk());
+    }
+
+    private String loginToken() throws Exception {
+        return this.mockMvc
+            .perform(
+                post("/login")
+                    .content("{\"username\":\"admin\",\"password\":\"admin\"}")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+            )
+            .andReturn()
+            .getResponse()
+            .getHeader(HttpHeaders.AUTHORIZATION);
+    }
+
+    @Test
+    public void wrongPasswordIsRejected() throws Exception {
+        this.mockMvc
+            .perform(
+                post("/login")
+                    .content("{\"username\":\"admin\",\"password\":\"wrong\"}")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+            )
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().doesNotExist(HttpHeaders.AUTHORIZATION));
+    }
+
+    @Test
+    public void carsRequireAToken() throws Exception {
+        this.mockMvc.perform(get("/api/cars")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void carsAreReturnedWithAValidToken() throws Exception {
+        this.mockMvc
+            .perform(get("/api/cars").header(HttpHeaders.AUTHORIZATION, loginToken()))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void forgedTokenIsRejected() throws Exception {
+        this.mockMvc
+            .perform(get("/api/cars").header(HttpHeaders.AUTHORIZATION, loginToken() + "x"))
+            .andExpect(status().isUnauthorized());
     }
 }

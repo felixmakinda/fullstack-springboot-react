@@ -1,5 +1,6 @@
 package com.packt.cardatabase.service;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -34,14 +35,17 @@ public class JwtService {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (token != null) {
-            String user = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token.replace(PREFIX, "").trim())
-                .getPayload()
-                .getSubject();
-
-            if (user != null) return user;
+            try {
+                return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token.replace(PREFIX, "").trim())
+                    .getPayload()
+                    .getSubject();
+            } catch (JwtException | IllegalArgumentException e) {
+                // Expired, tampered or malformed token: treat the request as unauthenticated
+                return null;
+            }
         }
         return null;
     }
