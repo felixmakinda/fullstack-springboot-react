@@ -27,7 +27,7 @@ function CustomToolbar() {
   );
 }
 
-function Carlist() {
+function Carlist(props) {
   const [cars, setCars] = useState([]);
   const [open, setOpen] = useState(false);
   const columns = [
@@ -59,19 +59,36 @@ function Carlist() {
   ];
 
   const fetchCars = () => {
-    fetch(SERVER_URL + "api/cars")
-      .then((response) => response.json())
+    // Read the token from session storage and send it with the request
+    const token = sessionStorage.getItem("jwt");
+    fetch(SERVER_URL + "api/cars", {
+      headers: { Authorization: token },
+    })
+      .then((response) => {
+        // An expired or unknown token: go back to the login form
+        if (response.status === 401) {
+          props.logOut();
+          throw new Error("Session expired");
+        }
+        return response.json();
+      })
       .then((data) => setCars(data._embedded.cars))
       .catch((err) => console.error(err));
   };
 
   useEffect(() => {
     fetchCars();
+    // Load the list once, when the page first appears
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDelClick = (url) => {
     if (window.confirm("Are you sure to delete?")) {
-      fetch(url, { method: "DELETE" })
+      const token = sessionStorage.getItem("jwt");
+      fetch(url, {
+        method: "DELETE",
+        headers: { Authorization: token },
+      })
         .then((response) => {
           if (response.ok) {
             fetchCars();
@@ -86,9 +103,13 @@ function Carlist() {
 
   // Add a new car
   const addCar = (car) => {
+    const token = sessionStorage.getItem("jwt");
     fetch(SERVER_URL + "api/cars", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
       body: JSON.stringify(car),
     })
       .then((response) => {
@@ -103,9 +124,13 @@ function Carlist() {
 
   // Update an existing car
   const updateCar = (car, link) => {
+    const token = sessionStorage.getItem("jwt");
     fetch(link, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
       body: JSON.stringify(car),
     })
       .then((response) => {
@@ -120,8 +145,9 @@ function Carlist() {
 
   return (
     <>
-      <Stack mt={2} mb={2}>
+      <Stack direction="row" justifyContent="space-between" mt={2} mb={2}>
         <AddCar addCar={addCar} />
+        <Button onClick={props.logOut}>Log out</Button>
       </Stack>
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid
