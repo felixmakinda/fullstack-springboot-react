@@ -75,14 +75,12 @@ test("logging out clears the token and shows the login form again", async () => 
 });
 
 test("submitting the form with Enter logs in", async () => {
-  const fetchSpy = vi
-    .spyOn(globalThis, "fetch")
-    .mockResolvedValue(
-      new Response(null, {
-        status: 200,
-        headers: { Authorization: "Bearer abc.def.ghi" },
-      }),
-    );
+  const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+    new Response(null, {
+      status: 200,
+      headers: { Authorization: "Bearer abc.def.ghi" },
+    }),
+  );
   render(<Login />);
   fireEvent.change(screen.getByLabelText("Username"), {
     target: { value: "tester" },
