@@ -31,11 +31,18 @@ function Carlist(props) {
   const [cars, setCars] = useState([]);
   const [open, setOpen] = useState(false);
   const columns = [
-    { field: "brand", headerName: "Brand", width: 200 },
-    { field: "model", headerName: "Model", width: 200 },
-    { field: "color", headerName: "Color", width: 200 },
-    { field: "year", headerName: "Year", width: 200 },
-    { field: "price", headerName: "Price", width: 200 },
+    { field: "brand", headerName: "Brand", width: 160 },
+    { field: "model", headerName: "Model", width: 160 },
+    { field: "color", headerName: "Color", width: 140 },
+    { field: "registerNumber", headerName: "Registration", width: 150 },
+    { field: "year", headerName: "Year", width: 100 },
+    {
+      field: "price",
+      headerName: "Price",
+      type: "number",
+      width: 130,
+      valueFormatter: (value) => value?.toLocaleString(),
+    },
     {
       field: "_links.car.href",
       headerName: "",
