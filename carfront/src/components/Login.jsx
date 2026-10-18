@@ -18,7 +18,9 @@ function Login() {
     setUser({ ...user, [event.target.name]: event.target.value });
   };
 
-  const login = () => {
+  const login = (event) => {
+    // Stop the browser from reloading the page when the form is submitted
+    event.preventDefault();
     fetch(SERVER_URL + "login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,18 +49,20 @@ function Login() {
 
   return (
     <div>
-      <Stack spacing={2} alignItems="center" mt={2}>
-        <TextField name="username" label="Username" onChange={handleChange} />
-        <TextField
-          type="password"
-          name="password"
-          label="Password"
-          onChange={handleChange}
-        />
-        <Button variant="outlined" color="primary" onClick={login}>
-          Login
-        </Button>
-      </Stack>
+      <form onSubmit={login}>
+        <Stack spacing={2} alignItems="center" mt={2}>
+          <TextField name="username" label="Username" onChange={handleChange} />
+          <TextField
+            type="password"
+            name="password"
+            label="Password"
+            onChange={handleChange}
+          />
+          <Button type="submit" variant="outlined" color="primary">
+            Login
+          </Button>
+        </Stack>
+      </form>
       <Snackbar
         open={open}
         autoHideDuration={3000}

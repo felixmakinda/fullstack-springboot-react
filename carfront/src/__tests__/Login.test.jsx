@@ -73,3 +73,27 @@ test("logging out clears the token and shows the login form again", async () => 
   expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
   expect(sessionStorage.getItem("jwt")).toBeNull();
 });
+
+test("submitting the form with Enter logs in", async () => {
+  const fetchSpy = vi
+    .spyOn(globalThis, "fetch")
+    .mockResolvedValue(
+      new Response(null, {
+        status: 200,
+        headers: { Authorization: "Bearer abc.def.ghi" },
+      }),
+    );
+  render(<Login />);
+  fireEvent.change(screen.getByLabelText("Username"), {
+    target: { value: "tester" },
+  });
+  fireEvent.change(screen.getByLabelText("Password"), {
+    target: { value: "secret" },
+  });
+
+  // Pressing Enter in a field submits its form
+  fireEvent.submit(screen.getByLabelText("Password").closest("form"));
+
+  expect(await screen.findByText("Fake car list: log out")).toBeInTheDocument();
+  expect(fetchSpy).toHaveBeenCalledTimes(1);
+});
