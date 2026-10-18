@@ -7,23 +7,25 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 
+const emptyCar = {
+  brand: "",
+  model: "",
+  color: "",
+  registerNumber: "",
+  year: "",
+  price: "",
+};
+
 function AddCar(props) {
   const [open, setOpen] = useState(false);
-  const [car, setCar] = useState({
-    brand: "",
-    model: "",
-    color: "",
-    registerNumber: "",
-    year: "",
-    price: "",
-  });
+  const [car, setCar] = useState(emptyCar);
 
   // Open the modal form
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Close the model form
+  // Close the modal form
   const handleClose = () => {
     setOpen(false);
   };
@@ -35,6 +37,7 @@ function AddCar(props) {
   // Save car and close modal form
   const handleSave = () => {
     props.addCar(car);
+    setCar(emptyCar);
     handleClose();
   };
 
@@ -78,6 +81,7 @@ function AddCar(props) {
             />
             <TextField
               label="Year"
+              type="number"
               name="year"
               variant="standard"
               value={car.year}
@@ -85,6 +89,7 @@ function AddCar(props) {
             />
             <TextField
               label="Price"
+              type="number"
               name="price"
               variant="standard"
               value={car.price}

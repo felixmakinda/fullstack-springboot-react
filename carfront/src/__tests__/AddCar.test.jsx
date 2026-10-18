@@ -36,6 +36,25 @@ test("save passes the typed car to addCar and closes the form", () => {
   });
 });
 
+test("the form is empty again after saving a car", () => {
+  render(<AddCar addCar={vi.fn()} />);
+  fireEvent.click(screen.getByText("New Car"));
+  fireEvent.change(screen.getByLabelText("Brand"), {
+    target: { value: "Lexus" },
+  });
+  fireEvent.click(screen.getByText("Save"));
+
+  fireEvent.click(screen.getByText("New Car"));
+  expect(screen.getByLabelText("Brand")).toHaveValue("");
+});
+
+test("year and price only accept numbers", () => {
+  render(<AddCar addCar={vi.fn()} />);
+  fireEvent.click(screen.getByText("New Car"));
+  expect(screen.getByLabelText("Year")).toHaveAttribute("type", "number");
+  expect(screen.getByLabelText("Price")).toHaveAttribute("type", "number");
+});
+
 test("renders a snapshot", () => {
   const { asFragment } = render(<AddCar addCar={vi.fn()} />);
   expect(asFragment()).toMatchSnapshot();

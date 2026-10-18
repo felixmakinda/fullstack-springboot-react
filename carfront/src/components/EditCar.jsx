@@ -88,6 +88,7 @@ function EditCar(props) {
             />
             <TextField
               label="Year"
+              type="number"
               name="year"
               variant="standard"
               value={car.year}
@@ -95,6 +96,7 @@ function EditCar(props) {
             />
             <TextField
               label="Price"
+              type="number"
               name="price"
               variant="standard"
               value={car.price}
